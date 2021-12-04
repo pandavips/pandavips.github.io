@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"./public/search.xml"};
+  </script>
+
+  <meta name="description" content="JavaScript 版本的数据结构前言老早就想找个机会把数据结构安排了!这次就一次性安排上吧,可能篇幅会很长,慢慢完成吧. 一天学一点,不要小看时间的威力! 这其实算是一个学习笔记,与之配套的课程链接: JavaScript 版数据结构与算法 轻松解决前端算法面试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="js版本的数据结构">
+<meta property="og:url" content="http://example.com/2021/11/29/js%E7%89%88%E6%9C%AC%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:site_name" content="PanDa的二进制生活">
+<meta property="og:description" content="JavaScript 版本的数据结构前言老早就想找个机会把数据结构安排了!这次就一次性安排上吧,可能篇幅会很长,慢慢完成吧. 一天学一点,不要小看时间的威力! 这其实算是一个学习笔记,与之配套的课程链接: JavaScript 版数据结构与算法 轻松解决前端算法面试">
+<meta property="og:locale">
+<meta property="og:image" content="http://example.com/public/2021/11/29/js%E7%89%88%E6%9C%AC%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE%E8%A1%A8%E7%A4%BA%E6%B3%95_%E9%82%BB%E6%8E%A5%E7%9F%A9%E9%98%B5.png">
+<meta property="article:published_time" content="2021-11-29T07:39:14.000Z">
+<meta property="article:modified_time" content="2021-12-04T03:22:10.095Z">
+<meta property="article:author" content="PanDa">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/public/2021/11/29/js%E7%89%88%E6%9C%AC%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE%E8%A1%A8%E7%A4%BA%E6%B3%95_%E9%82%BB%E6%8E%A5%E7%9F%A9%E9%98%B5.png">
+
+<link rel="canonical" href="http://example.com/2021/11/29/js%E7%89%88%E6%9C%AC%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>js版本的数据结构 | PanDa的二进制生活</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">PanDa的二进制生活</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">时光任你流</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/29/js%E7%89%88%E6%9C%AC%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="PanDa">
+      <meta itemprop="description" content="啥都可以写进来的地方~">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="PanDa的二进制生活">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          js版本的数据结构
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-11-29 15:39:14" itemprop="dateCreated datePublished" datetime="2021-11-29T15:39:14+08:00">2021-11-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-04 11:22:10" itemprop="dateModified" datetime="2021-12-04T11:22:10+08:00">2021-12-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/%E7%BC%96%E7%A8%8B%E5%86%85%E5%8A%9F/" itemprop="url" rel="index"><span itemprop="name">编程内功</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="JavaScript-版本的数据结构"><a href="#JavaScript-版本的数据结构" class="headerlink" title="JavaScript 版本的数据结构"></a>JavaScript 版本的数据结构</h2><h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>老早就想找个机会把数据结构安排了!<br>这次就一次性安排上吧,可能篇幅会很长,慢慢完成吧.</p>
+<p>一天学一点,不要小看时间的威力!</p>
+<p>这其实算是一个学习笔记,与之配套的课程链接: <a target="_blank" rel="noopener" href="https://coding.imooc.com/class/446.html">JavaScript 版数据结构与算法 轻松解决前端算法面试</a></p>
+<span id="more"></span>
+
+<h3 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h3><p>队列的特点是先进先出,就好比你去学校食堂打饭排的队,先排队就能先打到饭.<br><code>js</code>里并没有队列,但是可以使用<code>array</code>来模拟一个</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 队列</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Queue</span> </span>&#123;</span><br><span class="line">  #_q = [];</span><br><span class="line">  <span class="function"><span class="title">constructor</span>(<span class="params">arr</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (arr) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!<span class="built_in">Array</span>.isArray(arr)) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&quot;只能接受数组类型&quot;</span>);</span><br><span class="line">      <span class="built_in">this</span>.#_q = arr;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.#_q = [];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 入队</span></span><br><span class="line">  <span class="function"><span class="title">enQueue</span>(<span class="params">node</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.#_q.push(node);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 出队</span></span><br><span class="line">  <span class="function"><span class="title">outQueue</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.#_q.shift();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 获取当前队列</span></span><br><span class="line">  <span class="function"><span class="title">getQueue</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.#_q;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> q = <span class="keyword">new</span> Queue([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]);</span><br><span class="line"><span class="comment">// 入队两个元素</span></span><br><span class="line">q.enQueue(<span class="number">5</span>);</span><br><span class="line">q.enQueue(<span class="number">6</span>);</span><br><span class="line"><span class="built_in">console</span>.log(q.getQueue()); <span class="comment">//[ 1, 2, 3, 4, 5, 6 ]</span></span><br><span class="line"><span class="comment">// 出队一个</span></span><br><span class="line"><span class="built_in">console</span>.log(q.outQueue()); <span class="comment">//1</span></span><br><span class="line"><span class="built_in">console</span>.log(q.getQueue()); <span class="comment">//[ 2, 3, 4, 5, 6 ]</span></span><br></pre></td></tr></table></figure>
+
+<p>如上图所示,我们使用数组成功模拟了一个队列.</p>
+<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><p>栈和队列是很相似的,只是它的特点是先出后出,在生活中的场景可以比作弹夹上弹,你后压进去的弹药会被先射出来.<code>js</code>里没有栈这个数据接口,不过我们依然可以使用<code>array</code>来模拟一个</p>
+<p>栈这种数据其实与我们息息相关,比如函数调用堆栈<code>call Stack</code>,还有代码括号的有效性.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 栈</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Stack</span> </span>&#123;</span><br><span class="line">  #_s = [];</span><br><span class="line">  <span class="function"><span class="title">constructor</span>(<span class="params">arr</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (arr) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!<span class="built_in">Array</span>.isArray(arr)) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&quot;只能接受数组类型&quot;</span>);</span><br><span class="line">      <span class="built_in">this</span>.#_s = arr;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">this</span>.#_s = [];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 压栈</span></span><br><span class="line">  <span class="function"><span class="title">enStack</span>(<span class="params">node</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.#_s.push(node);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 出栈</span></span><br><span class="line">  <span class="function"><span class="title">outStack</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.#_s.pop();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 获取当前栈</span></span><br><span class="line">  <span class="function"><span class="title">getStack</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.#_s;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> s = <span class="keyword">new</span> Stack([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]);</span><br><span class="line"><span class="comment">// 入栈两个元素</span></span><br><span class="line">s.enStack(<span class="number">5</span>);</span><br><span class="line">s.enStack(<span class="number">6</span>);</span><br><span class="line"><span class="built_in">console</span>.log(s.getStack()); <span class="comment">//[ 1, 2, 3, 4, 5, 6 ]</span></span><br><span class="line"><span class="comment">// 出栈一个</span></span><br><span class="line"><span class="built_in">console</span>.log(s.outStack()); <span class="comment">//6</span></span><br><span class="line"><span class="built_in">console</span>.log(s.getStack()); <span class="comment">//[ 1, 2, 3, 4, 5 ]</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到,和队列的区别也就一个先进后出的区别.</p>
+<h3 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h3><p>集合是无序的,并且里边的元素是不可重复的,<code>js</code>里已经支持了<code>Set</code>这种数据结构.我们可以利用集合的不可重复性来进行数组去重等操作.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 集合</span></span><br><span class="line"><span class="keyword">const</span> set = <span class="keyword">new</span> <span class="built_in">Set</span>();</span><br><span class="line">set.add(<span class="number">1</span>);</span><br><span class="line">set.add(<span class="number">2</span>);</span><br><span class="line">set.add(<span class="number">3</span>);</span><br><span class="line"><span class="comment">// 尝试加入一个重复元素</span></span><br><span class="line">set.add(<span class="number">2</span>);</span><br><span class="line"><span class="built_in">console</span>.log(set); <span class="comment">//&#123; 1, 2, 3 &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(set.has(<span class="number">2</span>)); <span class="comment">//true</span></span><br><span class="line"><span class="comment">// 删除一个元素</span></span><br><span class="line">set.delete(<span class="number">2</span>);</span><br><span class="line"><span class="built_in">console</span>.log(set); <span class="comment">//&#123; 1, 3 &#125;</span></span><br><span class="line"><span class="comment">// 清空整个set</span></span><br><span class="line">set.clear();</span><br><span class="line"><span class="built_in">console</span>.log(set); <span class="comment">//&#123;&#125;</span></span><br><span class="line"><span class="comment">// 利用set对数组进行去重</span></span><br><span class="line"><span class="built_in">console</span>.log([...new <span class="built_in">Set</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">7</span>, <span class="number">8</span>])]); <span class="comment">//[1, 2, 3, 4, 5, 6, 7, 8]</span></span><br></pre></td></tr></table></figure>
+
+<p>我们还可以使用<code>Set</code>来求两个数组的交集等等.</p>
+<h3 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h3><p>字典是一种键值对集合的数据结构.你或许会问,我们平时使用的<code>object</code>不也是这样的数据结构吗,它有何好处?答案是他的键可以是<code>any</code>类型!字典的键是不可重复的,值是可以重复的.</p>
+<p><code>js</code>里已经支持了这种数据类型,我们来使用一下吧.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 字典</span></span><br><span class="line"><span class="keyword">const</span> dic = <span class="keyword">new</span> <span class="built_in">Map</span>();</span><br><span class="line"><span class="comment">// 一些不同类型的键</span></span><br><span class="line"><span class="keyword">const</span> key1 = <span class="string">&quot;str&quot;</span>;</span><br><span class="line"><span class="keyword">const</span> key2 = <span class="number">123</span>;</span><br><span class="line"><span class="keyword">const</span> key3 = &#123; <span class="attr">name</span>: <span class="string">&quot;panda&quot;</span> &#125;;</span><br><span class="line"><span class="keyword">const</span> key4 = <span class="string">&quot;我是个备用的&quot;</span>;</span><br><span class="line"><span class="comment">// 增</span></span><br><span class="line">dic.set(key1, <span class="string">&quot;我是一个字符串&quot;</span>);</span><br><span class="line">dic.set(key2, <span class="string">&quot;我是数字&quot;</span>);</span><br><span class="line">dic.set(key3, <span class="string">&quot;我是一个对象键类型&quot;</span>);</span><br><span class="line">dic.set(key4, <span class="string">&quot;测试&quot;</span>);</span><br><span class="line"><span class="built_in">console</span>.log(dic);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Map(4) &#123;</span></span><br><span class="line"><span class="comment">  &#x27;str&#x27; =&gt; &#x27;我是一个字符串&#x27;,</span></span><br><span class="line"><span class="comment">  123 =&gt; &#x27;我是数字&#x27;,</span></span><br><span class="line"><span class="comment">  &#123; name: &#x27;panda&#x27; &#125; =&gt; &#x27;我是一个对象键类型&#x27;,</span></span><br><span class="line"><span class="comment">  &#x27;我是个备用的&#x27; =&gt; &#x27;测试&#x27;</span></span><br><span class="line"><span class="comment">  &#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">// 删</span></span><br><span class="line">dic.delete(key3);</span><br><span class="line"><span class="comment">// 修改某一项的值</span></span><br><span class="line">dic.set(key4, <span class="string">&quot;测试er请不要折磨我&quot;</span>);</span><br><span class="line"><span class="built_in">console</span>.log(dic); <span class="comment">//Map(3) &#123; &#x27;str&#x27; =&gt; &#x27;我是一个字符串&#x27;, 123 =&gt; &#x27;我是数字&#x27;, &#x27;我是个备用的&#x27; =&gt; &#x27;测试er请不要折磨我&#x27; &#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="链表"><a href="#链表" class="headerlink" title="链表"></a>链表</h3><p>链表和数组,队列,栈的最大区别就是,他在内存里并不是一整块空间,就是说不是连续的内存空间,它是通过引用指针来将一个一个分散的数据连接起来,形成链状数据;由于链表的这种数据结构,带来的优点是节点的增删速度是极快的</p>
+<p><code>js</code>里没有链表这种数据结构,不过我们可以使用对象来模拟链表.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> node1 = &#123; <span class="attr">val</span>: <span class="string">&quot;1&quot;</span> &#125;;</span><br><span class="line"><span class="keyword">const</span> node2 = &#123; <span class="attr">val</span>: <span class="string">&quot;2&quot;</span> &#125;;</span><br><span class="line"><span class="keyword">const</span> node3 = &#123; <span class="attr">val</span>: <span class="string">&quot;3&quot;</span> &#125;;</span><br><span class="line"><span class="keyword">const</span> node4 = &#123; <span class="attr">val</span>: <span class="string">&quot;4&quot;</span> &#125;;</span><br><span class="line">node1.next = node2;</span><br><span class="line">node2.next = node3;</span><br><span class="line">node3.next = node4;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 现在的链表大致是这个样子:</span></span><br><span class="line"><span class="comment">&#123;</span></span><br><span class="line"><span class="comment">  val: &quot;1&quot;,</span></span><br><span class="line"><span class="comment">  next: &#123;</span></span><br><span class="line"><span class="comment">    val: &quot;2&quot;,</span></span><br><span class="line"><span class="comment">    next: &#123;</span></span><br><span class="line"><span class="comment">      val: &quot;3&quot;,</span></span><br><span class="line"><span class="comment">      next: &#123;</span></span><br><span class="line"><span class="comment">        val: &quot;4&quot;,</span></span><br><span class="line"><span class="comment">      &#125;,</span></span><br><span class="line"><span class="comment">    &#125;,</span></span><br><span class="line"><span class="comment">  &#125;,</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">// 增,如果不是末尾添加,那么你需要注意next的指向</span></span><br><span class="line"><span class="keyword">const</span> node5 = &#123; <span class="attr">val</span>: <span class="number">5</span> &#125;;</span><br><span class="line"><span class="comment">// 末尾添加,只需要指定尾部的next指向新添加的节点即可</span></span><br><span class="line">node4.next = node5;</span><br><span class="line"><span class="comment">// 中间位置插入,在node2位置后边插入</span></span><br><span class="line"><span class="keyword">const</span> insertNode = &#123; <span class="attr">val</span>: <span class="string">&quot;insertNode&quot;</span> &#125;;</span><br><span class="line"><span class="keyword">const</span> tmpNode = node2.next;</span><br><span class="line">node2.next = insertNode;</span><br><span class="line">insertNode.next = tmpNode;</span><br><span class="line"><span class="comment">// 删,删除node2后边的节点,原理也很简单,只需要将next的指向改变为下下个节点,那么被删除的节点就被链表流放了</span></span><br><span class="line">node2.next = node2.next.next;</span><br><span class="line"><span class="comment">// 改,修改node2的值</span></span><br><span class="line"><span class="keyword">const</span> newNode = &#123; <span class="attr">val</span>: <span class="string">&quot;updateNode&quot;</span> &#125;;</span><br><span class="line">node2.val = newNode.val;</span><br></pre></td></tr></table></figure>
+
+<p>这样,我们就基本实现了一个链表结构.可以看到,链表结构的数据增删是非常快的!只需要简单几步,不用循环遍历整个数据块.但是查找等操作将会非常耗时.</p>
+<p>在链表里,指针是一个重要的概念,你可以在一些算法里看到指针的运用,双指针等等.</p>
+<h4 id="一个便于理解指针的例子-我们可以通过键数组来获取一个-json节点的值"><a href="#一个便于理解指针的例子-我们可以通过键数组来获取一个-json节点的值" class="headerlink" title="一个便于理解指针的例子,我们可以通过键数组来获取一个 json节点的值"></a>一个便于理解指针的例子,我们可以通过<code>键</code>数组来获取一个 <code>json</code>节点的值</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> json = &#123;</span><br><span class="line">  <span class="attr">a</span>: &#123;</span><br><span class="line">    <span class="attr">b</span>: &#123;</span><br><span class="line">      <span class="attr">c</span>: &#123;</span><br><span class="line">        <span class="attr">d</span>: <span class="string">&quot;d&quot;</span>,</span><br><span class="line">        <span class="attr">test</span>: <span class="string">&quot;test&quot;</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">e</span>: &#123;</span><br><span class="line">    <span class="attr">f</span>: &#123;</span><br><span class="line">      <span class="attr">g</span>: <span class="string">&quot;g&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> keys = [<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c&quot;</span>, <span class="string">&quot;test&quot;</span>];</span><br><span class="line"><span class="keyword">const</span> getJSONValueByKeys = <span class="function">(<span class="params">json, keys</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> p = json;</span><br><span class="line">  keys.forEach(<span class="function">(<span class="params">key</span>) =&gt;</span> &#123;</span><br><span class="line">    p = p[key];</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">return</span> p;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="一个链表的遍历"><a href="#一个链表的遍历" class="headerlink" title="一个链表的遍历"></a>一个链表的遍历</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 用指针一直向下走,知道走到链表的尽头,就表示遍历结束了</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">const</span> linkedListTraverse = <span class="function">(<span class="params">head</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> p = head;</span><br><span class="line">  <span class="keyword">while</span> (p) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(p.val);</span><br><span class="line">    p = p.next;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="题目-1-删除指定节点-但上个节点未知-已知不会给定末尾节点"><a href="#题目-1-删除指定节点-但上个节点未知-已知不会给定末尾节点" class="headerlink" title="题目 1:删除指定节点,但上个节点未知,已知不会给定末尾节点"></a>题目 1:删除指定节点,但上个节点未知,已知不会给定末尾节点</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 删除指定节点,但是不能是末尾节点</span></span><br><span class="line"><span class="keyword">const</span> removeNode = <span class="function">(<span class="params">node</span>) =&gt;</span> &#123;</span><br><span class="line">  node.val = node.next.val;</span><br><span class="line">  node.next = node.next.next;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="题目-2-反转链表-双指针案例的典范"><a href="#题目-2-反转链表-双指针案例的典范" class="headerlink" title="题目 2:反转链表:双指针案例的典范"></a>题目 2:反转链表:双指针案例的典范</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 原理也很简单,只需要双指针一直往下走,然后循环的交换两个节点的位置</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">const</span> reverseLinkedList = <span class="function">(<span class="params">head</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> p1 = head;</span><br><span class="line">  <span class="keyword">let</span> p2 = <span class="literal">null</span>;</span><br><span class="line">  <span class="comment">// 当p1走到了尽头[null],那么就表示交换已经完成</span></span><br><span class="line">  <span class="keyword">while</span> (p1) &#123;</span><br><span class="line">    <span class="comment">// 临时保存节点</span></span><br><span class="line">    <span class="keyword">const</span> tmpNode = p1.next;</span><br><span class="line">    <span class="comment">// 让p1的指针指向p2</span></span><br><span class="line">    p1.next = p2;</span><br><span class="line">    <span class="comment">// 让两个指针往下走</span></span><br><span class="line">    p2 = p1;</span><br><span class="line">    p1 = tmpNode;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> p2;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="树"><a href="#树" class="headerlink" title="树"></a>树</h3><p>树形数据结构,就像他的名字一样,整个是以树形结构来储存数据.当然其中也包含很多分支:比如经常听到的<code>红黑树</code>,<code>二叉树</code>;</p>
+<p><code>js</code>里没有树这个数据结构，但是我们可以通过<code>array</code>+<code>object</code>来模拟树结构的数据.</p>
+<p>树的每个节点大致是下边这种结构.</p>
+<p>叶子节点:集节点下边没有分支,是一个末尾节点,这样就被称之为叶子节点.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TreeNode</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 当前节点的值</span></span><br><span class="line">  #_val = <span class="keyword">void</span> <span class="number">0</span>;</span><br><span class="line">  <span class="comment">// 当前节点的children节点数组</span></span><br><span class="line">  #_children = [];</span><br><span class="line">  <span class="comment">// ...其他一些需要的字段,可自行根据业务拓展</span></span><br><span class="line">  <span class="comment">// 构造函数</span></span><br><span class="line">  <span class="function"><span class="title">constructor</span>(<span class="params">val, children</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.#_val = val;</span><br><span class="line">    <span class="built_in">this</span>.#_children = children;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="常规的树"><a href="#常规的树" class="headerlink" title="常规的树"></a>常规的树</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 一个常规的树</span></span><br><span class="line"><span class="keyword">const</span> tree = &#123;</span><br><span class="line">  <span class="attr">val</span>: <span class="string">&quot;1&quot;</span>,</span><br><span class="line">  <span class="attr">children</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">val</span>: <span class="string">&quot;1-1&quot;</span>,</span><br><span class="line">      <span class="attr">children</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">val</span>: <span class="string">&quot;1-1-1&quot;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">      ],</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">val</span>: <span class="string">&quot;1-2&quot;</span>,</span><br><span class="line">      <span class="attr">children</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">val</span>: <span class="string">&quot;1-2-1&quot;</span>,</span><br><span class="line">          <span class="attr">children</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">              <span class="attr">val</span>: <span class="string">&quot;1-2-1-1&quot;</span>,</span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">              <span class="attr">val</span>: <span class="string">&quot;1-2-1-2&quot;</span>,</span><br><span class="line">            &#125;,</span><br><span class="line">          ],</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="attr">val</span>: <span class="string">&quot;1-2-2&quot;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">      ],</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">val</span>: <span class="string">&quot;1-3&quot;</span>,</span><br><span class="line">      <span class="attr">children</span>: [],</span><br><span class="line">    &#125;,</span><br><span class="line">  ],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="树的深度优先遍历"><a href="#树的深度优先遍历" class="headerlink" title="树的深度优先遍历"></a>树的深度优先遍历</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> treeIteratorDeep = <span class="function">(<span class="params">node</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(node.val);</span><br><span class="line">  node.children &amp;&amp;</span><br><span class="line">    node.children.forEach(<span class="function">(<span class="params">node</span>) =&gt;</span> &#123;</span><br><span class="line">      treeIteratorDeep(node);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="树的广度优先遍历"><a href="#树的广度优先遍历" class="headerlink" title="树的广度优先遍历"></a>树的广度优先遍历</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 大致思路:</span></span><br><span class="line"><span class="comment"> *  将每级队头都入队</span></span><br><span class="line"><span class="comment"> *  然后依次将队头出队,并将下边的子节点也入队</span></span><br><span class="line"><span class="comment"> *  重复以上就可以实现广度遍历</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">const</span> treeIteratorBreadth = <span class="function">(<span class="params">node</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 需要维护一个队列,来保存`广`维度的节点</span></span><br><span class="line">  <span class="keyword">const</span> q = [node];</span><br><span class="line">  <span class="keyword">while</span> (q.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> n = q.shift();</span><br><span class="line">    <span class="built_in">console</span>.log(n.val);</span><br><span class="line">    <span class="keyword">const</span> children = n.children;</span><br><span class="line">    children &amp;&amp;</span><br><span class="line">      children.forEach(<span class="function">(<span class="params">child</span>) =&gt;</span> &#123;</span><br><span class="line">        q.push(child);</span><br><span class="line">      &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="二叉树的先中后序遍历"><a href="#二叉树的先中后序遍历" class="headerlink" title="二叉树的先中后序遍历"></a>二叉树的先中后序遍历</h4><p>二叉树:这个树上的每个节点最多只有两个子节点</p>
+<p>它大致是下边的结构:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> binaryTree = &#123;</span><br><span class="line">  <span class="attr">val</span>: <span class="string">&quot;root&quot;</span>,</span><br><span class="line">  <span class="attr">left</span>: &#123;</span><br><span class="line">    <span class="attr">val</span>: <span class="string">&quot;l&quot;</span>,</span><br><span class="line">    <span class="attr">left</span>: &#123;</span><br><span class="line">      <span class="attr">val</span>: <span class="string">&quot;l-l&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">right</span>: &#123;</span><br><span class="line">      <span class="attr">val</span>: <span class="string">&quot;l-r&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">right</span>: &#123;</span><br><span class="line">    <span class="attr">val</span>: <span class="string">&quot;r&quot;</span>,</span><br><span class="line">    <span class="attr">left</span>: &#123;</span><br><span class="line">      <span class="attr">val</span>: <span class="string">&quot;r-l&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">right</span>: &#123;</span><br><span class="line">      <span class="attr">val</span>: <span class="string">&quot;r-r&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h5 id="先序遍历"><a href="#先序遍历" class="headerlink" title="先序遍历"></a>先序遍历</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="中序遍历"><a href="#中序遍历" class="headerlink" title="中序遍历"></a>中序遍历</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="后序遍历"><a href="#后序遍历" class="headerlink" title="后序遍历"></a>后序遍历</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="图"><a href="#图" class="headerlink" title="图"></a>图</h3><p>图这个数据结构,是由很多边链接形成的,并不是我们日常见到的图片的图.它是一个数据抽象模型,可以表示任何二元关系.<br><code>js</code>里并没有图这个数据结构,但是我们可以使用<code>array</code>和<code>object</code>来进行模拟.</p>
+<h4 id="图的表示法一-邻接矩阵"><a href="#图的表示法一-邻接矩阵" class="headerlink" title="图的表示法一:邻接矩阵"></a>图的表示法一:邻接矩阵</h4><p>邻接矩阵主要使用<code>0</code>和<code>1</code>来表示两个点直接的链接,如果两点之间有链接,那么就用<code>1</code>来表示,如果没有链接,那就用<code>0</code>来表示.</p>
+<p>先上图:<br><img src="/../../public/2021/11/29/js%E7%89%88%E6%9C%AC%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%9B%BE%E8%A1%A8%E7%A4%BA%E6%B3%95_%E9%82%BB%E6%8E%A5%E7%9F%A9%E9%98%B5.png" alt="邻接矩阵"></p>
+<h4 id="图的表示法二-邻接表"><a href="#图的表示法二-邻接表" class="headerlink" title="图的表示法二:邻接表"></a>图的表示法二:邻接表</h4><p>先上图:</p>
+<!-- ![邻接表](/) -->
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/11/26/%E8%AE%BA%E5%A6%82%E4%BD%95%E7%AB%AF%E6%AD%A3%E8%87%AA%E5%B7%B1%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%80%81%E5%BA%A6/" rel="prev" title="论如何端正自己的工作态度">
+      <i class="fa fa-chevron-left"></i> 论如何端正自己的工作态度
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/12/01/%E6%9D%82%E9%A1%B9%E7%AC%94%E8%AE%B0/" rel="next" title="杂项笔记">
+      杂项笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JavaScript-%E7%89%88%E6%9C%AC%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">JavaScript 版本的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%9F%E5%88%97"><span class="nav-number">1.2.</span> <span class="nav-text">队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%88"><span class="nav-number">1.3.</span> <span class="nav-text">栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E5%90%88"><span class="nav-number">1.4.</span> <span class="nav-text">集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E5%85%B8"><span class="nav-number">1.5.</span> <span class="nav-text">字典</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8"><span class="nav-number">1.6.</span> <span class="nav-text">链表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E4%BE%BF%E4%BA%8E%E7%90%86%E8%A7%A3%E6%8C%87%E9%92%88%E7%9A%84%E4%BE%8B%E5%AD%90-%E6%88%91%E4%BB%AC%E5%8F%AF%E4%BB%A5%E9%80%9A%E8%BF%87%E9%94%AE%E6%95%B0%E7%BB%84%E6%9D%A5%E8%8E%B7%E5%8F%96%E4%B8%80%E4%B8%AA-json%E8%8A%82%E7%82%B9%E7%9A%84%E5%80%BC"><span class="nav-number">1.6.1.</span> <span class="nav-text">一个便于理解指针的例子,我们可以通过键数组来获取一个 json节点的值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E9%93%BE%E8%A1%A8%E7%9A%84%E9%81%8D%E5%8E%86"><span class="nav-number">1.6.2.</span> <span class="nav-text">一个链表的遍历</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE-1-%E5%88%A0%E9%99%A4%E6%8C%87%E5%AE%9A%E8%8A%82%E7%82%B9-%E4%BD%86%E4%B8%8A%E4%B8%AA%E8%8A%82%E7%82%B9%E6%9C%AA%E7%9F%A5-%E5%B7%B2%E7%9F%A5%E4%B8%8D%E4%BC%9A%E7%BB%99%E5%AE%9A%E6%9C%AB%E5%B0%BE%E8%8A%82%E7%82%B9"><span class="nav-number">1.6.3.</span> <span class="nav-text">题目 1:删除指定节点,但上个节点未知,已知不会给定末尾节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE-2-%E5%8F%8D%E8%BD%AC%E9%93%BE%E8%A1%A8-%E5%8F%8C%E6%8C%87%E9%92%88%E6%A1%88%E4%BE%8B%E7%9A%84%E5%85%B8%E8%8C%83"><span class="nav-number">1.6.4.</span> <span class="nav-text">题目 2:反转链表:双指针案例的典范</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%91"><span class="nav-number">1.7.</span> <span class="nav-text">树</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E8%A7%84%E7%9A%84%E6%A0%91"><span class="nav-number">1.7.1.</span> <span class="nav-text">常规的树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%91%E7%9A%84%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E9%81%8D%E5%8E%86"><span class="nav-number">1.7.2.</span> <span class="nav-text">树的深度优先遍历</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%91%E7%9A%84%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E9%81%8D%E5%8E%86"><span class="nav-number">1.7.3.</span> <span class="nav-text">树的广度优先遍历</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%85%88%E4%B8%AD%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86"><span class="nav-number">1.7.4.</span> <span class="nav-text">二叉树的先中后序遍历</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%85%88%E5%BA%8F%E9%81%8D%E5%8E%86"><span class="nav-number">1.7.4.1.</span> <span class="nav-text">先序遍历</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%AD%E5%BA%8F%E9%81%8D%E5%8E%86"><span class="nav-number">1.7.4.2.</span> <span class="nav-text">中序遍历</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86"><span class="nav-number">1.7.4.3.</span> <span class="nav-text">后序遍历</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE"><span class="nav-number">1.8.</span> <span class="nav-text">图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BE%E7%9A%84%E8%A1%A8%E7%A4%BA%E6%B3%95%E4%B8%80-%E9%82%BB%E6%8E%A5%E7%9F%A9%E9%98%B5"><span class="nav-number">1.8.1.</span> <span class="nav-text">图的表示法一:邻接矩阵</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%BE%E7%9A%84%E8%A1%A8%E7%A4%BA%E6%B3%95%E4%BA%8C-%E9%82%BB%E6%8E%A5%E8%A1%A8"><span class="nav-number">1.8.2.</span> <span class="nav-text">图的表示法二:邻接表</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">PanDa</p>
+  <div class="site-description" itemprop="description">啥都可以写进来的地方~</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">PanDa</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
